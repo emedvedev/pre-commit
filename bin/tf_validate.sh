@@ -13,8 +13,10 @@ for file_with_path in "$@"; do
 done
 
 for path_uniq in $(echo "${paths[*]}" | tr ' ' '\n' | sort -u); do
-  pushd "$path_uniq" > /dev/null
-  terraform init -backend=false
-  terraform validate
-  popd > /dev/null
+  if [[ -n "$(find "$path_uniq" -maxdepth 1 -name '*.tf' -print -quit)" ]]; then
+    pushd "$path_uniq" > /dev/null
+    terraform init -backend=false
+    terraform validate
+    popd > /dev/null
+   fi
 done
